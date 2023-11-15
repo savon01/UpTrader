@@ -1,0 +1,30 @@
+{% load static %}
+{% load menu_tags %}
+
+<html>
+<head>
+    <title>Menu</title>
+    <link rel="stylesheet" href="{% static 'menu.css' %}">
+</head>
+
+{% for menu_name in menu_names %}
+<div class="dropdown">
+<button class="dropbtn">{{ menu_name }}</button>
+    {% render_menu menu_name=menu_name as items %}
+<div class="dropdown-content">
+    {% for menu_item in items.menu_items %}
+      {% with last_ancestor=menu_item.get_ancestors|slice:"1"|last %}
+        <li {% if menu_item.url == current_path or last_ancestor.url == current_path %} class="active"{% endif %}>
+            {% if menu_item.named_url %}
+                <a href="{% url menu_item.url %}">{{ menu_item.title }}</a>
+            {% else %}
+                <a href="{{ menu_item.url }}">{{ menu_item.title }}</a>
+            {% endif %}
+        </li>
+    {% endwith %}
+    {% endfor %}
+</div>
+</div>
+{{ items.parent }}
+{% endfor %}
+
